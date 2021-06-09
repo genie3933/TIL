@@ -218,3 +218,25 @@ parse_num(phone_num)
 ```
 
 - 함수를 만들기 전에 먼저 호출하면 에러가 뜸. 파이썬 코드는 위에서 아래로 순차적 진행을 하기 때문.
+
+
+## 응용
+
+```python
+# 아래의 문자를 딕셔너리 형태로 변경하기
+phone = ">경기 031 >강원 033 >충남 041 >충북 043 >경북 054 >경남 055 >전남 061 >전북 063"
+# ">" 문자를 기준으로 문자열을 나눕니다.
+# phone_split
+
+phone_dic = {} # 빈 딕셔너리 선언
+for phone_split in phone.split(">"):
+    if len(phone_split) > 0:
+        key = phone_split.split()[0] # 공백 기준으로 또 나눠줌. 거기서 0번째를 key값으로
+        val = phone_split.split()[1] # 인덱스 1번을 값으로
+        phone_dic[key] = val # for문이 도는 동안 phone_dic에 계속해서 키와 값 추가
+phone_dic
+```
+
+- 공백을 제거하기 위해 if문에 len(phone_split) > 0 조건 삽입
+- split 개념과 딕셔너리 키, 값을 추가하는 것에 익숙하지 않아 그 부분이 약간 어려웠으나 코드를 하나씩 풀어 생각했더니 이해 완료
+- 새로운 딕셔너리를 for 문을 통해 만들려면 먼저 선언을 해줘야함

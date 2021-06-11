@@ -1,0 +1,441 @@
+- DBMS, 오라클
+    1. DBMS 개요
+    2. RDBMS
+    3. 오라클이란?
+- 오라클 기본 구조와 SQL Developer 구성
+    1. 오라클 구조
+    2. SQL*Plus와 SQL Developer
+- 테이블
+    1. 테이블이란?
+    2. 각종 제약조건
+    3. 테이블 생성
+    4. 테이블 수정
+    5. 테이블 삭제
+- SQL 소개
+    1. SQL 이란?
+    2. SQL 종류
+- SELECT문 알아보기
+    1. SELECT 문
+    2. WHERE 절
+    3. ORDER BY 절
+- SQL 연산자와 표현식
+    1. SQL 연산자
+    2. SQL 표현식
+    3. 의사컬럼(pseudocolumn)
+
+---
+
+## DBMS, 오라클
+
+### DBMS 개요
+
+- 데이터베이스를 관리하는 컴퓨터 프로그램
+- 계층형, 네트워크형, 관계형, 객체지향형, DBMS, NoSQL 등
+
+### RDBMS
+
+- 관계형 데이터베이스
+- 특징: 데이터 중복 최소화, 데이터 무결성, 트랜잭션 처리, SQL을 이용한 쉬운 데이터 처리, 보안성 강화
+- 오라클은 SQL을 지원하는 최초의 사용 RDBMS
+- 종류: 오라클, SQL Server, DB2, MySQL, MariaDB 등
+
+### 오라클이란?
+
+- 가장 대표적인 상용 RDBMS 제품
+- 전 세계적으로 여러 기업과 조직에서 사용
+- 대용량 데이터 처리에 있어서 안정적이고 탁월함
+
+## 오라클 기본 구조와 SQL Developer 구성
+
+### 오라클 구조
+
+- **사용자와 스키마**
+- 사용자: 오라클에 접속해 DB를 사용하는 계정
+- 스키마: 사용자와 해당 사용자 소유의 데이터베이스 객체들의 집합
+- SYS와 SYSTEM 계정(관리자)
+- SYS계정: 관리자 계정, 데이터베이스 백업, 복구 등 모든 권한
+- SYSTEM 계정: 관리자 계정이나 데이터베이스 백업, 복구, 업그레이드 권한 없음
+
+- **권한과 롤**
+- 권한은 DB상에서 특정 작업을 할 수 있는 권한을 말함
+- 시스템권한, 객체권한으로 나뉨
+- 시스템 권한: create user(사용자 생성), create session(데이터베이스 접속 권한), create table(테이블 생성)
+- 객체 권한: 테이블, 뷰 등 DB 객체를 대상으로 작업할 수 있는 권한. 객체 소유자가 다른 사용자에게 권한 할당 가능
+- 롤은 비슷한 권한의 집합임
+- DBA롤: 시스템 권한을 모아 놓은 롤
+- 권한이나 롤을 부여할 때는 GRANT 권한 TO 사용자;
+- 권한이나 롤을 회수할 때는 REVOKE 권한 FROM 사용자;
+
+### SQL*Plus와 SQL Developer
+
+### SQL*Plus
+
+- SQL을 작성해 실행하고 그 결과를 확인하는 툴
+- 주로 오라클 관리 명령어 실행 용도로 사용
+
+### SQL Developer
+
+- SQL문을 실행하고 그 결과를 확인할 수 있는 GUI 기반 툴
+- 오라클 내부 명령어 일부 사용 가능
+- 오라클 뿐만 아니라 다른 RDBMS와 연결해 사용 가능
+
+## 테이블
+
+### 테이블이란?
+
+### 테이블 정의
+
+- RDBMS에서 데이터를 저장하는 2차원 형태의 데이터베이스 객체
+- 다양한 유형의 속성을 가진 데이터의 집합
+
+### 테이블 구조와 생성
+
+- 컬럼(속성), 로우(행)로 이루어짐
+- 테이블 생성은 '컬럼'에 대한 정의
+
+### 컬럼 정의
+
+- 테이블명, 컬럼명, 컬럼의 데이터 유형, 각종 제약조건 정의
+- 문자, 숫자, 언더바 사용가능. but, 첫 글자는 반드시 문자로
+- 컬럼의 데이터 유형은 크게 문자형, 숫자형, 날짜형으로 구분
+
+### 데이터 타입 정리
+
+- 문자형 데이터: CHAR, VARCHAR2있지만 대부분 가변형인 VARCHAR2를 사용. 크기는 넉넉하게 하는 것이 좋음.
+- 숫자형 데이터: NUMBER
+- 날짜형 데이터: DATE
+
+### 각종 제약조건
+
+- 제약조건은 데이터 무결성을 보장하기 위한 객체임
+- 테이블 정의 시 컬럼에 대한 제약조건을 거는 형태
+- NOT NULL, 기본키, Default, Check 등
+
+### NOT NULL
+
+- 반드시 해당 컬럼에 데이터가 들어가야 함. 아니면 오류 발생.
+- NULL은 데이터가 없음을 의미. 공백 혹은 공집합과는 다른 개념.
+
+### 기본키(Primary key)
+
+- 로우 1개를 구분할 수 있는 식별자가 들어가 있는 컬럼
+- 기본키로 지정된 데이터는 중복 값이 없음 (유일성)
+- 유일한 값 + NOT NULL 형태
+- 테이블 하나 당 기본키는 하나만 생성 가능
+
+### Default
+
+- 테이블의 특정 컬럼에 들어갈 기본값 정의
+
+### Check
+
+- 사전에 설정된 값만 입력 가능
+- ex) GENDER VARCHAR2(1) CHECK(GENDER IN ('M', 'F')) 인 경우 GENDER 컬럼에는 M이나 F값만 입력 가능. 다른 값 입력하면 오류 발생.
+
+### 테이블 생성
+
+- CREATE TABLE 문 사용
+- CREATE TABLE 테이블명(컬럼명1 데이터유형 NULL/NOT NULL, 컬럼명2 데이터유형 NULL/NOT NULL, ....);
+- 기본키 생성 방법 3가지
+
+```sql
+# 테이블 생성시 생성1
+CREATE TABLE EMP(
+	emp_no VARCHAR2(30) PRIMARY KEY,
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL);
+
+# 테이블 생성시 생성2
+CREATE TABLE EMP2(
+	emp_no VARCHAR2(30),
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL,
+	PRIMARY KEY(emp_no));
+
+# ALTER TABLE 구문 사용해서 기본키 생성
+CREATE TABLE EMP3(
+	emp_no VARCHAR2(30),
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL);
+
+ALTER TABLE EMP3
+ADD CONSTRAINTS EMP3_PK PRIMARY KEY(EMP_NO); # PK명 지정됨
+```
+
+### 테이블 수정
+
+- ALTER TABLE 문 사용
+- 새 컬럼 추가, 기존 컬럼 삭제, 기존 컬럼 수정
+
+```sql
+# 기존 컬럼 수정(MODIFY)
+# 사원명 컬럼 길이를 100바이트로 수정
+ALTER TABLE EMP
+MODIFY EMP_NAME VARCHAR2(100);
+
+# 컬럼 추가(ADD)
+# EMP_NAME2 컬럼 추가 (데이터 타입은 VARCHAR2(80)으로)
+ALTER TABLE EMP
+ADD EMP_NAME2 VARCHAR2(80);
+
+# 컬럼명 변경(RENAME COLUMN)
+# EMP_NAME2 컬럼명을 EMP_NAME3으로 변경
+ALTER TABLE EMP
+RENAME COLUMN EMP_NAME2 TO EMP_NAME3;
+
+# 기존 컬럼 삭제(DROP COLUMN)
+# EMP_NAME3 컬럼 삭제
+ALTER TABLE EMP
+DROP COLUMN EMP_NAME3;
+```
+
+### 테이블 삭제
+
+- DROP TABLE문을 사용 (데이터도 함께 삭제)
+- DROP TABLE 테이블명;
+
+실습
+
+```sql
+# 부서 테이블 생성
+CREATE TABLE DEPT_TEST(
+	DEPT_NO NUMBER,
+	DEPT_NAME VARCHAR2(50) NOT NULL,
+	DEPT_DESC VARCHAR2(100),
+	CREATE_DATE DATE);
+
+# DEPT_TEST_PK 란 이름으로 PK 생성
+ALTER TABLE DEPT_TEST
+ADD CONSTRAINTS DEPT_TEST_PK PRIMARY(DEPT_NO);
+
+# DEPT_TEST 테이블 삭제
+DROP TABLE DEPT_TEST
+```
+
+## SQL 소개
+
+### SQL 이란
+
+- Structured Query Language. 구조화 된 질의 언어.
+- 데이터 처리(입력, 삭제, 수정)뿐만 아니라 데이터베이스 객체(테이블, 뷰, ...)생성, 수정 시 사용
+- 특정 조건에 맞는 데이터를 한번에 처리하는 집합적 언어
+- ANSI, ISO의 SQL 표준 존재
+
+### SQL 종류
+
+- DDL(데이터 정의어)
+
+→ 데이터베이스 객체를 생성, 수정, 삭제
+
+→ CREATE: 객체 생성
+
+→ DROP: 객체 삭제
+
+→ ALTER: 객체 수정
+
+→ TRUNCATE TABLE: 테이블 데이터 삭제(구조는 남아있음)
+
+→ RENAME: 객체 이름 변경
+
+- DML(데이터 조작어)
+
+→ 데이터를 조회, 입력, 수정, 삭제
+
+→ SELECT: 데이터 조회
+
+→ INSERT: 신규 데이터 입력, 저장
+
+→ UPDATE: 기존 데이터 수정
+
+→ DELETE: 데이터 삭제(BUT, 로그는 남아있음)
+
+→ MERGE: 조건에 따라 입력, 수정을 동시에 처리
+
+- TCL(트랜잭션 제어어)
+
+→ COMMIT: DML로 변경된 데이터를 데이터베이스에 저장
+
+→ ROLLBACK: DML로 변경된 데이터를 변경 이전 상태로 되돌림
+
+- DCL(데이터 제어어)
+
+→ 권한 할당, 회수
+
+→ GRANT: 사용자에게 권한 할당
+
+→ REVOKE: 사용자로부터 권한 회수
+
+## SELECT문 알아보기
+
+### SELECT문
+
+- 대표적인 DML문장이며 데이터를 조회하는 역할
+- WHERE절을 사용해 특정 조건에 맞는 데이터만 조회 가능
+- ORDER BY절을 사용해 데이터 정렬해서 조회 가능
+- 기본구문은 다음과 같다
+
+```sql
+SELECT 컬럼1, 컬럼2, ....
+	FROM 테이블명
+WHERE 조건
+ORDER BY 정렬순서;
+
+# 전체 컬럼을 조회시엔 SELECT절에 * 명시
+# FROM절에서 테이블명을 2개 이상 명시할때는 콤마로 구분
+```
+
+### WHERE절
+
+- 테이블에 있는 특정 데이터를 뽑아내기 위한 조건을 기술 (필터 역할)
+- 1개 이상 조건 명시 가능 → AND 혹은 OR로 연결
+- 조건의 연산 결과가 TRUE인 건을 조회
+- 문자열 데이터 비교시, 오라클은 대소문자를 구분한다는 점 기억!
+- 문자값 비교시엔 작은 따옴표(')로 둘러싸야 함
+
+### ORDER BY절
+
+- 데이터를 정렬하는 역할
+- ORDER BY 컬럼1[ASC|DESC], 컬럼2[ASC|DESC], ...형태
+- 오름차순 정렬이 ASC, 내림차순 정렬이 DESC. 디폴트 값은 ASC이므로 생략 가능
+- 컬럼명이 아닌 SELECT절에 기술한 컬럼 순서로 명시 가능
+- SELECT절에 없는 컬럼이름으로도 정렬은 가능하다
+- NULL값 정렬방법으로는 NULL FIRST(NULL값을 먼저), NULL LAST(NULL값을 나중에)가 있다
+- 오라클에서 NULL값은 가장 큰 값으로 인식된다
+
+## SQL 연산자와 표현식
+
+### SQL 연산자
+
+- **기본 연산자**
+
+→ 단항 부호 연산자: +, - (양수, 음수), 우선순위1
+
+→ 수식 연산자: *, / (곱하기, 나누기), 우선순위2
+
+→ 수식연산자: +, - (더하기, 빼기), 날짜형 데이터 사용 가능, 우선순위3
+
+→ 문자열 결합 연산자: ||, 우선순위3
+
+```sql
+# 문자열 결합
+SELECT first_name||''||last_name AS full_name
+FROM EMPLOYEES;
+```
+
+- **비교 연산자**
+
+→ 동등 연산자: =, 값이 같으면 참
+
+→ 비동등 연산자: !=, <> 값이 틀리면 참
+
+→ 부등호 연산자: >, <, >= ,=<
+
+→ BETWEEN...AND: 대상값 BETWEEN 값1 AND 값2 (값1, 값2 포함한 범위)
+
+```sql
+# BETWEEN AND 연산자
+SELECT *
+FROM EMPLOYEES
+WHERE SALARY BETWEEN 3000 AND 5000 # 급여가 3000이상 5000이하
+ORDER BY SALARY; # 급여 순으로 오름차순
+```
+
+→ AND: AND 연산자
+
+→ OR: OR 연산자
+
+→ NOT: NOT연산자
+
+- **기타 연산자**
+
+→ NULL 연산자: IS NULL, IS NOT NULL
+
+    NULL은 비교 연산자로 비교가 불가능하다(NULL은 공백 혹은 공집합과 다름. 값이 정의되지 않는 것을 의미하기 때문.)
+
+    EX) WHERE COL1 = NULL (X), WHERE COL1 IS NULL (O), WHERE COL1 IS NOT NULL(O)
+
+   오라클에서는 NULL과 공백을 동일시 함(다른 DBMS에서는 구분)
+
+→ LIKE: 문자열 비교
+
+    '%'는 모든 문자를 의미한다
+
+    EX) WHERE LAST_NAME 'DA%'; → DA로 시작하는 모든 LAST_NAME
+
+          WHERE LAST_NAME '%D'; → D로 끝나는 모든 LAST_NAME
+
+         WHERE LAST_NAME '%DA%' → DA가 들어가는 모든 LAST_NAME
+
+→ IN: 컬럼 IN(값1, 값2, 값3, ....) ⇒ OR과 동일한 동작
+
+→ 그 외 집합 연산자: UNION, UNION ALL, INTERSECT, MINUS, EXISTS, ....
+
+### SQL 표현식
+
+- 1개 이상의 값, 연산자, 컬럼, SQL 함수가 결합된 식
+- CASE 표현식
+
+→ IF ~ THEN ~ ELSE 로직 구현
+
+→ 여러 조건을 체크해 조건별 값 반환
+
+→ 단순형, 검색형
+
+```sql
+# 단순형 CASE 표현식
+# expr이 비교표현식1과 같으면 값1, 비교표현식2와 같으면 값2 반환
+# 어느것도 같지 않으면 ELSE 다음의 값N 반환
+CASE expr WHEN 비교표현식1 THEN 값1
+					WHEN 비교표현식2 THEN 값2
+					....
+					ELSE 값N
+END
+
+# 검색형 CASE 표현식
+# 조건1 만족하면 값1 반환, 조건2 만족하면 값2 반환
+# 어느 조건도 만족하지 않으면 값N 반환
+# 단순형에 비해 다양한 조건 검색 가능, 활용범위 넓음
+CASE WHEN 조건1 THEN 값1
+		WHEN 조건2 THEN 값2
+		....
+		ELSE 값N
+END
+```
+
+- CASE 표현식의 특징
+
+→ **반환하는 값의 데이터 유형이 모두 같아야** 한다
+
+EX) 반환값이 모두 문자열인데 갑자기 숫자가 튀어나올수는 없음!
+
+→ ELSE 생략 가능
+
+→ 비교 데이터 기준 WHEN절 조건이 참이면 이후 조건은 체크하지 않는다
+
+### 의사컬럼
+
+- 테이블에 있는 컬럼처럼 동작하지만 실제 컬럼은 아닌 가상의 컬럼
+- ROWNUM 의사컬럼
+
+→ 조회된 로우에 대한 순번 반환 (행의 순서 반환)
+
+    EX) 첫 번째 로우는 1 반환, 두 번째는 2, ....
+
+→ 주로 WHERE절에서 쿼리 결과 반환 수 제어할 때 사용
+
+```sql
+# 5개의 행만 보고 싶을 때
+SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, ROWNUM
+FROM EMPLOYEES
+WHERE ROWNUM <= 5;
+
+## 질문...
+WHERE절에 있는 조건은 SELECT절에 있는 컬럼만 사용할 수 있는 것일까?
+그게 아니라면 ROWNUM의 경우는? ROWNUM은 가상컬럼이기 때문에 SELECT절에 굳이 명시해서 WHERE절에 쓰는 것인지?
+SELECT절에 ROWNUM을 명시 안해도 WHERE절에서 조건으로 사용 가능한지?
+```
+
+→ 이 외에도 계층형 쿼리, 시퀀스, XML 관련 의사컬럼이 있다

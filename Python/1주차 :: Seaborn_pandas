@@ -1,0 +1,238 @@
+- seaborn
+- numpy
+- df.head, df.tail, df.sample
+- 상관계수
+- series의 빈도수
+- groupby
+- countplot(빈도수 시각화)
+- barplot
+- boxplot, violinplot
+- scatterplot (산점도 그래프)
+- regplot (회귀 그래프)
+- Implot
+
+---
+
+## Seaborn
+
+- Matplotlib에 기반하여 제작된 파이썬 데이터 시각화 모듈
+- pandas 데이터프레임과 호환성이 높음
+- import seaborn as sns로 라이브러리 import
+
+## Numpy
+
+- 행렬이나 대규모 다차원 배열을 쉽게 처리할 수 있도록 지원하는 파이썬의 라이브러리
+- 데이터 구조 외에도 수치 계산을 위해 효율적으로 구현된 기능 제공
+- import numpy as np로 라이브러리 import
+
+## df.head, df.tail, df.sample
+
+- df.head( )는 데이터의 앞 부분을 보여준다. default값은 5. 보통 숫자를 입력하지 않으면 5개의 행 보여줌.
+- df.tail( )은 데이터의 맨 뒷 부분을 보여줌. head와 마찬가지로 default값은 5.
+- df.sample( )는 데이터의 랜덤값을 하나 조회해줌. 랜덤값이기 때문에 조회할 때마다 값이 바뀐다.
+
+```python
+# sample의 여러 옵션들
+df.sample(3, random_state = 42)
+# 3은 조회할 건수, random_state는 랜덤 샘플 추출시 시드를 입력받으며 같은 시드에서는 항상 같은 결과를 출력한다.
+# 즉, random_state는 값을 고정시키는 역할을 하는 것!
+
+# 출력 결과
+   dataset	x	y
+37	IV	8.0	8.47
+24	III	13.0	12.74
+25	III	9.0	7.11
+```
+
+## 상관계수
+
+- 두 변수 x, y 사이의 상관관계 정도를 나타내는 수치
+- 피어슨에 의해 제안되었기 때문에 피어슨 상관계수라고도 함
+- 상관계수 r은 항상 -1과 1 사이에 존재
+- 상관계수의 절대값의 크기는 직선관계에 가까운 정도를 나타내고, 부호는 직선관계의 방향을 나타냄
+
+    음의 부호 : 음의 상관관계, 양의 부호 : 양의 상관관계
+
+- 상관관계의 절대값이 클수록 (절대값이 1에 가까울수록) 두 변수 사이의 연관성이 크고, 0에 가까울수록 연관성이 약하다
+- 파이썬에서 상관계수를 계산하려면 df.corr( )을 해주면 됨
+
+## Series 빈도수
+
+- 시리즈의 빈도수를 구하기 위해서는 value_counts( )를 사용
+- normalize 옵션 ⇒ False이면 개수, True이면 상대 비율을 구해준다
+
+```python
+# dataset의 빈도수 구하기
+df["dataset"].value_counts()
+
+# 출력결과
+III    11
+I      11
+II     11
+IV     11
+Name: dataset, dtype: int64
+
+# dataset의 상대 비율
+df["dataset"].value_counts(normalize = True)
+
+# 출력결과
+III    0.25
+I      0.25
+II     0.25
+IV     0.25
+Name: dataset, dtype: float64
+
+# 백분위
+df["dataset"].value_counts(normalize = True) * 100
+
+# 출력결과
+III    25.0
+I      25.0
+II     25.0
+IV     25.0
+Name: dataset, dtype: float64
+```
+
+## Groupby
+
+- 파이썬에서는 groupby 연산자를 사용해 집단, 그룹별로 데이터를 집계, 요약이 가능하다
+- df.groupby("묶을 컬럼명")
+- count, sum, min, max, mean, std 등등 각종 함수를 활용하여 그룹별로 연산 가능
+- groupby로 묶인 데이터들도 describe를 통해 기술통계량 조회 가능
+
+```python
+# dataset별로 기술통계량 조회
+desc = df.groupby("dataset").describe()
+desc
+
+# 출력결과
+x	y
+count	mean	std	min	25%	50%	75%	max	count	mean	std	min	25%	50%	75%	max
+dataset																
+I	11.0	9.0	3.316625	4.0	6.5	9.0	11.5	14.0	11.0	7.500909	2.031568	4.26	6.315	7.58	8.57	10.84
+II	11.0	9.0	3.316625	4.0	6.5	9.0	11.5	14.0	11.0	7.500909	2.031657	3.10	6.695	8.14	8.95	9.26
+III	11.0	9.0	3.316625	4.0	6.5	9.0	11.5	14.0	11.0	7.500000	2.030424	5.39	6.250	7.11	7.98	12.74
+IV	11.0	9.0	3.316625	8.0	8.0	8.0	8.0	19.0	11.0	7.500909	2.030579	5.25	6.170	7.04	8.19	12.50
+
+# 좀 더 보기좋게 행과 열을 바꿔주려면 transpose() 사용
+# T = transpose()
+# df.T 형태
+desc["x"].T
+
+# 출력결과
+dataset	I	II	III	IV
+count	11.000000	11.000000	11.000000	11.000000
+mean	9.000000	9.000000	9.000000	9.000000
+std	3.316625	3.316625	3.316625	3.316625
+min	4.000000	4.000000	4.000000	8.000000
+25%	6.500000	6.500000	6.500000	8.000000
+50%	9.000000	9.000000	9.000000	8.000000
+75%	11.500000	11.500000	11.500000	8.000000
+max	14.000000	14.000000	14.000000	19.000000
+```
+
+- 상관계수 역시 df.groupby().corr()로 조회 가능
+- agg 사용해서 연산하고 싶은 함수를 직접 만들어 활용 가능하다
+
+```python
+# dataset별 y값의 mean, std를 한꺼번에 계산하고 싶은 경우
+df.groupby("dataset")["y"].agg(["mean", "std"])
+
+# 출력결과
+mean	std
+dataset		
+I	7.500909	2.031568
+II	7.500909	2.031657
+III	7.500000	2.030424
+IV	7.500909	2.030579
+
+# key, value값으로도 나타내기 가능
+df.groupby("dataset").agg({"x" : "mean",
+													"y" : {"mean", "std"}})
+
+# 출력결과
+x	y
+mean	mean	std
+dataset			
+I	9.0	7.500909	2.031568
+II	9.0	7.500909	2.031657
+III	9.0	7.500000	2.030424
+IV	9.0	7.500909	2.030579
+```
+
+## countplot(빈도수 시각화)
+
+- 범주형 변수의 발생 횟수를 세주는 그래프
+- 일변량 분석임
+- sns.countplot( )
+- 범주형 변수의 발생횟수를 세주는 함수는 df.value_counts( )
+
+## Barplot
+
+- 이변량 분석을 위한 plot
+- 보통 x축에는 범주형 변수, y축에는 연속형 변수를 넣어줌
+- sns.barplot( )
+
+```python
+# sns.barplot(data = df, x = "dataset", y = "y", ci = "sd") # ci는 신뢰구간을 뜻함
+# 평균
+sns.barplot(data = df, x = "dataset", y = "y", ci = None, estimator = np.mean)
+# 합계
+sns.barplot(data = df, x = "dataset", y = "y", ci = None, estimator = np.sum)
+```
+
+## Boxplot
+
+- 최대, 최소, 중앙값, 1사분위수, 3사분위수를 보기 위한 그래프
+- 이상치를 발견하기에 좋은 그래프
+- 단일 연속형 변수에 대해 수치를 표시하거나 연속형 변수를 기반으로 서로 다른 범주형 변수를 분석할 수 있음
+- sns.boxplot( )
+
+
+## Violinplot
+
+- 박스 플롯과 동일하게 일변량, 연속형 데이터의 분포를 설명하기 위해 사용되는 그래프
+- 대부분의 내용이 박스 플롯과 같음
+- 카테고리값에 따른 각 분포의 실제 데이터 또는 전체 형상을 보여준다는 장점
+- sns.violinplot( )
+- boxplot, violinplot 비교
+
+
+## Scatterplot (산점도 그래프)
+
+- 각각의 데이터 포인트 들을 흩 뿌려놓은 형태. 각각의 점은 자료의 case 하나하나를 의미
+- 기본적으로 두 변수간의 관계를 알아보기 위한 것
+- 양의 상관관계, 음의 상관관계, 무상관을 나타냄
+- 시각화 중요성을 설득하기 위해 많이 사용함
+- sns.scatterplot( )
+
+
+## Regplot (회귀 그래프)
+
+- scatter plot과 line plot을 함께 볼 수 있는 그래프
+- regplot은 hue 옵션을 지원하지 않는다
+- hue 옵션은 색상을 나눠주는 역할을 함
+
+```python
+# hue 파라미터를 지원하지 않는 regplot의 그래프
+sns.regplot(data=df, x="x", y="y")
+```
+
+
+## Implot
+
+- regplot과 Implot은 단독으로 사용했을 때는 큰 차이가 없음
+- 그러나 Implot을 주로 사용하는 이유는 hue 파라미터로 카테고리 변수를 지정해 카테고리별로 각각 데이터의 분포와 선형관계를 표시할 수 있다
+- 결국 regplot과 Implot의 가장 큰 차이점은 hue 파라미터를 쓸 수 있냐, 없냐!
+
+```python
+# hue 파라미터 사용 가능한 Implot (dataset별로 변수 지정해 각각의 데이터 분포 알 수 있음)
+sns.Implot(data=df, x="x", y="y", hue = "dataset")
+```
+
+```python
+# col 파라미터를 이용해 카테고리 별로 따로 따로 산점도 회귀 그래프를 볼 수 있음!
+sns.Implot(data=df, x="x", y="y", hue = "dataset", 
+				col="dataset", col_wrap = 2)
+```
+

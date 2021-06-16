@@ -1,0 +1,230 @@
+- 수치형 변수
+    - 비대칭도(왜도)
+    - 첨도
+    - distplot 알아보기
+    - boxplot과 kdeplot 알아보기
+    - 2개 이상의 수치변수
+    - 회귀 시각화
+    - 잔차 시각화
+    - pairplot
+    - lineplot
+- 상관분석
+    - 피어슨 상관계수
+    - 상관계수 구하기
+
+---
+
+## 수치형 변수
+
+- 양적 자료
+- 관측된 값이 수치로 측정되는 자료 (계산이 가능한 숫자의 형태)
+- ex) 키, 몸무게, 시험성적 등
+
+### 비대칭도(왜도)
+
+- 분포가 정규분포에 비해 얼마나 비대칭인지 나타내는 척도
+- 왜도가 음수일 경우 확률밀도함수의 왼쪽 부분에 긴 꼬리를 가지며 중앙값을 포함한 자료가 오른쪽에 더 많이 분포해 있다
+- 왜도가 양수일 경우 확률밀도함수의 오른쪽 부분에 긴 꼬리를 가지며 자료가 왼쪽에 더 많이 분포해 있다
+- 평균=중앙값인 경우 왜도는 0이 된다
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d98a0935-0636-4f59-9dc7-7972c4c6f65a/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d98a0935-0636-4f59-9dc7-7972c4c6f65a/Untitled.png)
+
+출처: [https://ko.wikipedia.org/wiki/비대칭도](https://ko.wikipedia.org/wiki/%EB%B9%84%EB%8C%80%EC%B9%AD%EB%8F%84)
+
+- 파이썬에서는 .skew() 함수를 통해 왜도를 확인해 볼 수 있다
+
+### 첨도
+
+- 분포의 뾰족한 정도를 의미한다
+- 뾰족한 정도란 '관측치들이 어느 정도 집중적으로 중심에 몰려있는가'를 뜻한다
+- 첨도값(K)이 3에 가까우면 산포도가 정규분포에 가깝다
+- 첨도값이 3보다 작을 경우(K<3) 산포는 정규분포보다 더 뾰족한 분포의 형태를 보인다
+- 첨도값이 3보다 클 경우(K>3) 산포는 정규분포보다 더 완만한 분포의 형태를 보인다
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c6f0ff2c-1560-4eef-9a36-66eef19b2f8d/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c6f0ff2c-1560-4eef-9a36-66eef19b2f8d/Untitled.png)
+
+출처: [https://ko.wikipedia.org/wiki/첨도](https://ko.wikipedia.org/wiki/%EC%B2%A8%EB%8F%84)
+
+- 파이썬에서는 .kurt() 함수를 통해 첨도를 확인해 볼 수 있다
+
+### distplot 알아보기
+
+- distplot은 seaborn의 함수로, 기본적으로는 히스토그램을 그려준다
+- distplot은 rug와 kde 밀도 시각화가 가능한 옵션을 설정할 수 있어 Matplotlib의 hist보다 많이 사용된다고 한다
+- kde=True 옵션을 지정하면 밀집도 그래프를 그릴 수 있다
+- rug=True 옵션을 지정하면 데이터의 위치를 그래프에 선분으로 표시해준다
+
+```python
+# displot을 통해 히스토그램과 kdeplot 그리기 (밀도추정곡선 그리기)
+sns.displot(data = df, x = "mpg", kde=True, rug=True)
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d76917a8-7e32-4f51-aa56-13d99df4a415/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d76917a8-7e32-4f51-aa56-13d99df4a415/Untitled.png)
+
+- kde와 rug는 옵션이 아닌 단독으로도 사용 가능하다
+
+```python
+# kdeplot, rugplot으로 밀도함수 표현하기
+sns.kdeplot(data=df, x="mpg", shade=True, cut=3) 
+sns.rugplot(data=df, x="mpg")
+# y축값은 적분해서 모두 더했을때 1이되는 값들이 나온다
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5a8de1a7-2fff-442a-89ef-d137156d90b7/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/5a8de1a7-2fff-442a-89ef-d137156d90b7/Untitled.png)
+
+### boxplot과 kdeplot 알아보기
+
+- boxplot은 상자수염그림으로 수치적 자료를 표현하는 그래프이다
+- boxplot에서 최솟값, 제1사분위, 제2사분위, 제3사분위, 최댓값을 확인할 수 있다
+- 상자 수염 사이에 포함되지 않는 점은 이상치다
+- kdeplot은 kernel density estimation의 약자로 확률 밀도를 추정해주는 밀도함수이다
+- 밀도함수이므로 그래프에 나타나는 y축값은 적분해서 모두 더했을 때 1의 값을 가진다
+
+### 2개 이상의 수치변수
+
+- 2개 이상의 수치변수를 비교하기 위해서 다양한 그래프를 이용할 수 있다
+
+```python
+# weight별 mpg 값 분포 비교
+sns.scatterplot(data=df, x="weight", y="mpg")
+
+# weight별 horsepower 값 분포 비교
+sns.scatterplot(data=df, x="weight", y="horsepower")
+
+# jointplot의 kind옵션을 이용해 다양한 그래프를 한꺼번에 표현 가능
+# kind : { "scatter" | "kde" | "hist" | "hex" | "reg" | "resid" }
+sns.jointplot(data=df, x="weight", y="mpg", kind="reg") # 여기에서는 kind 옵션을 회귀그래프로 지정해보았다.
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ea01722f-950f-4737-a34a-140529e56f99/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ea01722f-950f-4737-a34a-140529e56f99/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e09da525-6fcb-48ac-8778-71319620f579/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e09da525-6fcb-48ac-8778-71319620f579/Untitled.png)
+
+→ weight값이 높을수록 mpg값은 낮아지고 있다 (데이터 분포는 고른편)
+
+→ 반면 weight값이 높을수록 horsepower값도 높아지는 것을 확인할 수 있다 (데이터의 분포는 작은 값에 몰려있는 것을 확인)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d2e06a91-7dbe-4240-bf2f-c739228a2dde/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d2e06a91-7dbe-4240-bf2f-c739228a2dde/Untitled.png)
+
+→ 다양한 모양의 그래프 표현
+
+### 회귀 시각화
+
+- regplot 함수를 사용해 수치형 데이터의 회귀 그래프를 볼 수 있다
+- regplot 함수 사용시 주의할 점은 신뢰구간을 표시하지 않는 것이다
+- 데이터가 많을수록 그래프에 신뢰구간을 표시하기 어려우므로 양이 많은 데이터를 시각화 할 경우에는 ci=None 옵션을 주는 것이 좋다
+
+```python
+# 앞의 weight, mpg 두 수치형 변수를 회귀선으로 표현
+sns.regplot(data=df, x="weight", y="mpg", ci=None)
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/22179ffb-5106-428a-9dec-72dd9b579ce2/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/22179ffb-5106-428a-9dec-72dd9b579ce2/Untitled.png)
+
+- lmplot을 통해 더 많은 옵션을 추가 할 수 있다
+- regplot은 보통 hue 옵션을 지원하지 않기 때문에 회귀선을 범주마다 다른 색깔로 구분하고 싶다면  lmplot을 쓰면 된다
+
+```python
+# scatterplot과 lmplot 비교
+sns.scatterplot(data=df, x="weight", y="mpg", hue="origin")
+sns.lmplot(data=df, x="weight", y="mpg", hue="origin", 
+						col="origin", truncate=False, ci=None)
+# hue: 범주마다 색 구분
+# col: 범주별로 나눠서 회귀 그래프를 각각 보여주는 옵션
+# truncate=False: 데이터가 없는곳 까지 회귀선을 그어주는 옵션
+# truncate=True: 데이터가 있는곳 까지만 회귀선을 그어주는 옵션
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bed96aeb-076a-46c6-8c1e-dd7d181cb119/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bed96aeb-076a-46c6-8c1e-dd7d181cb119/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/856eaa15-0636-43f6-8aa6-cd1f80fe61e9/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/856eaa15-0636-43f6-8aa6-cd1f80fe61e9/Untitled.png)
+
+### 잔차 시각화
+
+- 잔차: 회귀식을 통해 얻은 예측값과 실제 관측값의 차이
+- residplot 함수를 사용해 회귀선의 잔차를 시각화 할 수 있다
+
+```python
+sns.residplot(data=df, x="weight", y="mpg")
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7447e2f6-3194-4fd9-8324-964c2d7f987e/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7447e2f6-3194-4fd9-8324-964c2d7f987e/Untitled.png)
+
+### pairplot
+
+- 데이터의 각각 모든 열의 상관관계를 출력해준다
+- 모든 열의 상관관계를 출력하기 때문에 시간이 오래걸리므로 데이터의 일부 샘플을 추출해 그려보면서(보통 100개 샘플) 수를 늘려가며 그리는 것이 좋다
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6f66d6aa-cdca-4138-a652-c1e8946b5105/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6f66d6aa-cdca-4138-a652-c1e8946b5105/Untitled.png)
+
+### lineplot
+
+- 선 그래프로 시간에 따라 변화하는 모양을 나타내는데 편리하다
+
+```python
+# origin별 model_year, mpg 값 시각화
+sns.lineplot(data=df, x="model_year", y="mpg", ci=None, hue="origin") # 문법도 다른 plot들과 유사
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6729895c-273f-4e94-b3f7-822655402c24/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6729895c-273f-4e94-b3f7-822655402c24/Untitled.png)
+
+- scatterplot과 lineplot의 상위 개념으로 relplot을 사용할 수 있다
+- relplot은 두 함수를 모두 포함하기 때문에 kind 옵션을 사용하여 산점도와 선 그래프 모두 그릴 수 있다
+
+```python
+# relplot으로 전체 수치 변수 시각화
+sns.relplot(data=df)
+
+# kind="line" 옵션 추가해서 선그래프로도 변경 가능
+sns.relplot(data=df, kind="line")
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/66b97317-9679-4bcc-8220-2578c72a1d12/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/66b97317-9679-4bcc-8220-2578c72a1d12/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/47e63e22-7dac-40b6-bf71-6b9075a96e21/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/47e63e22-7dac-40b6-bf71-6b9075a96e21/Untitled.png)
+
+## 상관분석
+
+- 두 변수간에 어떤 선형적 또는 비선형적 관계를 갖고 있는지 분석하는 방법을 상관분석이라고 한다 (두 변수가 서로 어떠한 관계를 가지는가?)
+- 상관관계의 정도를 나타내는 단위로 모상관계수로 ρ를 사용하며 표본 상관 계수로 r 을 사용한다
+- 상관계수는 두 변수간의 연관된 정도를 나타낼 뿐 인과관계를 설명하지는 못한다
+- 인과관계는 회귀분석을 통해 알 수 있다
+
+출처: [https://ko.wikipedia.org/wiki/상관_분석](https://ko.wikipedia.org/wiki/%EC%83%81%EA%B4%80_%EB%B6%84%EC%84%9D)
+
+### 피어슨 상관계수
+
+- 두 변수 x와 y간의 선형 상관관계를 계량화 한 수치
+- r 값은 x와 y 가 완전히 동일하면 +1, 전혀 다르면 0, 반대방향으로 완전히 동일하면 –1 을 가진다
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7ab56f27-a62f-4e01-9d91-4d5c69a758a7/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7ab56f27-a62f-4e01-9d91-4d5c69a758a7/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1a356cc8-7389-4c1a-9283-4fda8b4555b3/.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1a356cc8-7389-4c1a-9283-4fda8b4555b3/.png)
+
+### 상관계수 구하기
+
+- 파이썬에서는 .corr( ) 함수를 통해 상관계수를 확인할 수 있다
+- 보통 heatmap을 통해 상관계수를 시각화한다
+
+```python
+# 상관계수를 구해서 corr이라는 이름의 데이터 생성후 히트맵 작성
+corr = df.corr()
+sns.heatmap(data=corr, annot=True, cmap="coolwarm",
+						vmax=1, vmin=-1)
+
+# 이렇게 전체를 heatmap plot할 경우 가독성이 떨어지므로, 대각행렬을 기준으로 한쪽의 데이터들만 masking
+# 즉, mask값을 생성해서 heatmap plot에 이용하는 것이다
+# heatmap의 마스크값을 구하려면 먼저 np.ones_like 사용한다
+# np.ones_like(x): x와 크기만 같은 1로 이루어진 array를 생성한다
+# 생성된 array를 상삼각행렬로 만들어주기 위해 np.triu로 감싸준다
+# 최종적으로 만들어진 상삼각행렬 array를 mask라는 이름의 데이터에 넣어준 후 heatmap plot 작성시 mask 옵션에 사용한다
+mask = np.triu(np.ones_like(corr))
+sns.heatmap(data=corr, annot=True, cmap="coolwarm",
+						vmax=1, vmin=-1, mask=mask)
+# 옵션 설명
+# annot=True: 값 표시, cmap: 색 관련, vmax, vmin: 막대값 조정, mask: masking할 값
+```
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ae7ebcaf-7fd1-4c83-b9e5-7d62614df714/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ae7ebcaf-7fd1-4c83-b9e5-7d62614df714/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d9046da6-fe6b-424d-be9e-2c6d1cd61912/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d9046da6-fe6b-424d-be9e-2c6d1cd61912/Untitled.png)

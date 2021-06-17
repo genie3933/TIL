@@ -166,6 +166,7 @@ sns.scatter(data=df, x="origin", y="mpg")
 
 ```python
 # stripplot
+# scatterplot과의 차이점: stripplot은 데이터 값의 분포를 퍼트려서 표현하므로 겹쳐지는 데이터 값을 더 잘보이게 한다.
 sns.stripplot(data=df, x="origin", y="mpg")
 ```
 

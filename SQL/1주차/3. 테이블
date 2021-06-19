@@ -1,0 +1,149 @@
+- 테이블이란?
+    - 테이블 정의
+    - 테이블 구조와 생성
+    - 컬럼 정의
+    - 데이터 타입 정리
+- 각종 제약조건
+    - NOT NULL
+    - 기본키
+    - Default
+    - Check
+- 테이블 생성
+- 테이블 수정
+- 테이블 삭제
+
+---
+
+## 테이블
+
+### 테이블 정의
+
+- RDBMS에서 데이터를 저장하는 2차원 형태의 데이터베이스 객체
+- 다양한 유형의 속성을 가진 데이터의 집합
+
+### 테이블 구조와 생성
+
+- 컬럼(속성), 로우(행)로 이루어진다
+- 테이블 생성은 '컬럼'에 대한 정의이다
+
+### 컬럼 정의
+
+- 테이블명, 컬럼명, 컬럼의 데이터 유형, 각종 제약조건 정의
+- 문자, 숫자, 언더바 사용가능. but, 첫 글자는 반드시 문자로 시작해야한다
+- 컬럼의 데이터 유형은 크게 문자형, 숫자형, 날짜형으로 구분한다
+
+### 데이터 타입 정리
+
+- 문자형 데이터: CHAR, VARCHAR2있지만 대부분 가변형인 VARCHAR2를 사용. 크기는 넉넉하게 하는 것이 좋다.
+- 숫자형 데이터: NUMBER
+- 날짜형 데이터: DATE
+
+## 각종 제약조건
+
+- 제약조건은 데이터 무결성을 보장하기 위한 객체이다
+- 테이블 정의 시 컬럼에 대한 제약조건을 거는 형태
+- NOT NULL, 기본키, Default, Check 등
+
+### NOT NULL
+
+- 반드시 해당 컬럼에 데이터가 들어가야하며 아닐 경우 오류가 발생한다
+- NULL은 데이터가 없음을 의미한다. 공백 혹은 공집합과는 다른 개념이다.
+
+### 기본키(Primary key)
+
+- 로우 1개를 구분할 수 있는 식별자가 들어가 있는 컬럼
+- 기본키로 지정된 데이터는 중복 값이 없다 (유일성)
+- 유일한 값 + NOT NULL 형태
+- 테이블 하나 당 기본키는 하나만 생성 가능하다
+
+### Default
+
+- 테이블의 특정 컬럼에 들어갈 기본값을 정의한다
+
+### Check
+
+- 사전에 설정된 값만 입력 가능하다
+- ex) GENDER VARCHAR2(1) CHECK(GENDER IN ('M', 'F')) 인 경우 GENDER 컬럼에는 M이나 F값만 입력 가능. 다른 값 입력하면 오류가 발생한다.
+
+## 테이블 생성
+
+- CREATE TABLE 문 사용
+- CREATE TABLE 테이블명(컬럼명1 데이터유형 NULL/NOT NULL, 컬럼명2 데이터유형 NULL/NOT NULL, ....);
+- 기본키 생성 방법 3가지
+
+```sql
+# 테이블 생성시 생성1
+CREATE TABLE EMP
+	emp_no VARCHAR2(30) PRIMARY KEY,
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL);
+
+# 테이블 생성시 생성2
+CREATE TABLE EMP2(
+	emp_no VARCHAR2(30),
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL,
+	PRIMARY KEY(emp_no));
+
+# ALTER TABLE 구문 사용해서 기본키 생성
+CREATE TABLE EMP3(
+	emp_no VARCHAR2(30),
+	emp_name VARCHAR2(80) NOT NULL,
+	salary NUMBER NULL,
+	hire_date DATE NULL);
+
+ALTER TABLE EMP3
+ADD CONSTRAINTS EMP3_PK PRIMARY KEY(EMP_NO); # PK명 지정
+```
+
+## 테이블 수정
+
+- ALTER TABLE 문 사용
+- 새 컬럼 추가, 기존 컬럼 삭제, 기존 컬럼 수정
+
+```sql
+# 기존 컬럼 수정(MODIFY)
+# 사원명 컬럼 길이를 100바이트로 수정
+ALTER TABLE EMP
+MODIFY EMP_NAME VARCHAR2(100);
+
+# 컬럼 추가(ADD)
+# EMP_NAME2 컬럼 추가 (데이터 타입은 VARCHAR2(80)으로)
+ALTER TABLE EMP
+ADD EMP_NAME2 VARCHAR2(80);
+
+# 컬럼명 변경(RENAME COLUMN)
+# EMP_NAME2 컬럼명을 EMP_NAME3으로 변경
+ALTER TABLE EMP
+RENAME COLUMN EMP_NAME2 TO EMP_NAME3;
+
+# 기존 컬럼 삭제(DROP COLUMN)
+# EMP_NAME3 컬럼 삭제
+ALTER TABLE EMP
+DROP COLUMN EMP_NAME3;
+```
+
+## 테이블 삭제
+
+- DROP TABLE문을 사용한다 (데이터도 함께 삭제)
+- DROP TABLE 테이블명;
+
+실습
+
+```sql
+# 부서 테이블 생성
+CREATE TABLE DEPT_TEST(
+	DEPT_NO NUMBER,
+	DEPT_NAME VARCHAR2(50) NOT NULL,
+	DEPT_DESC VARCHAR2(100),
+	CREATE_DATE DATE);
+
+# DEPT_TEST_PK 란 이름으로 PK 생성
+ALTER TABLE DEPT_TEST
+ADD CONSTRAINTS DEPT_TEST_PK PRIMARY(DEPT_NO);
+
+# DEPT_TEST 테이블 삭제
+DROP TABLE DEPT_TEST
+```

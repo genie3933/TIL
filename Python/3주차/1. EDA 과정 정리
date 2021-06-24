@@ -1,0 +1,38 @@
+- EDA 과정 정리
+- 데이터 재구조화
+- map, apply의 차이점
+- pandas의 style 기능
+
+---
+
+## EDA 과정 정리
+
+1. 데이터 로드
+2. (필요하다면) melt로 tidy data 만들기
+3. 로드한 데이터 탐색 (head, tail, info, describe....)
+4. 데이터 결측치 확인(isnull)
+5. 필요없는 컬럼 삭제 혹은 변경, 필요한 컬럼 추가
+6. 데이터 집계와 연산 (평균, 합계 등)
+7. 집계, 연산된 데이터를 시각화 (barplot, boxplot, swarmplot, carplot 등)
+
+- 1-5번 과정이 데이터를 정리하는 작업이라고 생각하면 된다
+- 6번은 정리된 데이터를 가지고 연산을 하는 것이고,
+- 7번은 연산된 데이터를 가지고 시각화 하는 것이다
+
+## 데이터 재구조화 (reshape)
+
+- pd.melt( )
+- 원래 데이터셋에 있던 여러개의 칼럼이름을 'variable' 칼럼에 넣어주고 variable에 해당하는 값을 'value'칼럼에 넣어주는 식으로 데이터를 재구조화해준다
+- melt( ) 적용 전과 적용 후의 이미지는 다음과 같다
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/52ffc760-62c5-4c81-96c7-fcf7e9dcc588/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/52ffc760-62c5-4c81-96c7-fcf7e9dcc588/Untitled.png)
+
+출처: [https://rfriend.tistory.com/278](https://rfriend.tistory.com/278)
+
+## map과 apply의 차이
+
+- map은 시리즈에서만, apply는 시리즈와 데이터프레임 모두 적용 가능하다
+
+## pandas의 style 기능
+
+[https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.background_gradient.html](https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.background_gradient.html)

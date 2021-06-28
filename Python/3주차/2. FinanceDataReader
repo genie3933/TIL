@@ -1,0 +1,22 @@
+- Finance Data Reader
+    - 종목코드
+    - 가격 데이터
+
+---
+
+## Finance Data Reader
+
+- 거래소 별 전체 종목코드와 가격데이터를 불러오는 금융 데이터 수집 라이브러리
+- 설치: pip install -U finance-datareader
+
+### 종목코드
+
+- 거래소별 전체 종목코드 : KRX (KOSPI, KOSDQ, KONEX), NASDAQ, NYSE, AMEX, S&P 500
+
+### 가격 데이터
+
+- 해외주식 가격 데이터: AAPL(애플), AMZN(아마존), GOOG(구글) 등
+- 국내주식 가격 데이터: 005930(삼성전자), 091990(셀트리온 헬스케어) 등 코드 6자리 사용
+- 각종지수: KS11(코스피지수), KQ11(코스닥지수), DJI(다우지수), IXIC(나스닥지수), US500(S&P 5000)
+- 환율 데이터: USD/KRX (원달러 환율), USD/EUR(달러당 유로화 환율), CNY/KRW(위엔화 원화 환율)
+- 암호화폐 가격: BTC/USD(비트코인 달러 가격), BTC/KRW(비트코인 원화 가격)

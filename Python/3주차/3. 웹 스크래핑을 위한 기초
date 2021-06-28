@@ -3,6 +3,10 @@
     - HTML
     - XPATH
 - Requests
+- User Agent
+- BeautifulSoup
+    - Beautiful Soup를 이용해 데이터 구조 항해하기
+    - BeautifulSoup Parser(해석기) 라이브러리 종류
 
 ---
 
@@ -45,9 +49,139 @@
 
 ## Requests
 
-- 웹 페이지 url의 정보를 가져오는 역할
+- 웹 페이지 url의 정보를 가져오는 역할 (작은 브라우저로 웹 사이트를 읽어오는 목적)
 - status_code를 찍었을 때 200이라는 값을 가져오면 정상적으로 가져오기 성공
 - raise_for_status( )를 쓰면 바로 응답코드가 정상인지 아닌지 알 수 있다
+
     (에러가 나면 자동 종료)
-    
-    출처: 인프런 '나도코딩'님의 '파이썬 활용편3 웹 스크래핑' 강의
+
+## User Agent
+
+- 내가 어떤 OS를 쓰고 있고, 버전은 어떤 버전인지, 웹 브라우저의 정보는 어떤 것인지 등을 담고 있는 번호판 같은 개념
+- 홈페이지의 부하나 정보를 빼내가는 것을 막기 위한 장치로 데이터를 가져올 수 없을 때 (403 에러 등) user agent를 통해 이를 해결할 수 있다
+- 접속하는 브라우저에 따라 user agent 값이 다르다
+- headers = {"User-Agent" : "user agent 값"}
+
+    res = requests.get(url, headers = headers) ⇒ user agent 값을 그대로 header에 넘겨줌으로써 에러를 막을 수 있다
+
+**출처: 인프런 '나도코딩'님의 '파이썬 활용편3 웹 스크래핑' 강의**
+
+## BeautifulSoup
+
+- 읽어온 웹 사이트의 html, xml문서를 해석해주는 파이썬의 라이브러리
+- 선호하는 해석기와 함께 사용하여 일반적인 방식으로 해석 트리를 항해, 검색, 변경할 수 있다
+- BeautifulSoup으로 감싸주는것 만으로도 보기 어려운 html 문서를 깔끔하게 정리해서 보여준다
+- 라이브러리 불러오기: from bs4 import BeautifulSoup
+
+### Beautiful Soup를 이용해 데이터 구조 항해하기
+
+```python
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html_doc)
+
+print(soup.prettify())
+# <html>
+#  <head>
+#   <title>
+#    The Dormouse's story
+#   </title>
+#  </head>
+#  <body>
+#   <p class="title">
+#    <b>
+#     The Dormouse's story
+#    </b>
+#   </p>
+#   <p class="story">
+#    Once upon a time there were three little sisters; and their names were
+#    <a class="sister" href="http://example.com/elsie" id="link1">
+#     Elsie
+#    </a>
+#    ,
+#    <a class="sister" href="http://example.com/lacie" id="link2">
+#     Lacie
+#    </a>
+#    and
+#    <a class="sister" href="http://example.com/tillie" id="link3">
+#     Tillie
+#    </a>
+#    ; and they lived at the bottom of a well.
+#   </p>
+#   <p class="story">
+#    ...
+#   </p>
+#  </body>
+# </html>
+```
+
+```python
+# 데이터 구조 항해하는 몇 가지 방법
+soup.title
+# <title>The Dormouse's story</title>
+soup.title.name
+# u'title'
+soup.title.string
+# u'The Dormouse's story'
+soup.title.parent.name
+# u'head'
+soup.p
+# <p class="title"><b>The Dormouse's story</b></p>
+soup.p['class']
+# u'title'
+soup.a
+# <a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>
+soup.find_all('a')
+# [<a class="sister" href="http://example.com/elsie" id="link1">Elsie</a>,
+#  <a class="sister" href="http://example.com/lacie" id="link2">Lacie</a>,
+#  <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>]
+soup.find_all(id='link3')
+# <a class="sister" href="http://example.com/tillie" id="link3">Tillie</a>
+```
+
+- 페이지에서 해당 태그에 존재하는 모든 URL을 뽑아낼 때
+
+    soup.find_all('해당 태그명')
+
+- 페이지에서 텍스트를 모두 뽑아낼 때
+
+    soup.get_text( )
+
+### BeautifulSoup Parser(해석기) 라이브러리 종류
+
+- 파이썬의 html.parser
+
+    사용방법: BeautifulSoup(markup, "html.parser")
+
+    장점: 각종 기능 완비, 적절한 속도, 관대함(파이썬 2.7.3~3.2버전에서)
+
+    단점: lxml보다 빠르지 않음, html5lib보다 덜 관대함
+
+- lxml의 HTML parser
+
+    사용방법: BeautifulSoup(markup, "lxml")
+
+    장점: 매우 빠름, 관대함
+
+    단점: 외부 C라이브러리 의존
+
+- lxml의 XML parser
+
+    사용방법: BeautifulSoup(markup, "lxml-xml") 
+
+    BeautifulSoup(markup,"xml")
+
+    장점: 매우 빠름, 유일하게 XML parser 지원
+
+    단점: 외부 C라이브러리 의존
+
+- html5lib
+
+    사용방법: BeautifulSoup(markup, "html5lib")
+
+    장점: 매우 관대함, 웹 브라우저 방식으로 페이지를 해석, 유효한 html5 생성
+
+    단점: 매우 느림, 외부 파이썬 라이브러리 의존
+
+- 웬만하면 속도가 빠른 lxml 라이브러리를 사용하는 것을 추천한다
+
+**참고문서: [https://www.crummy.com/software/BeautifulSoup/bs4/doc/](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)**

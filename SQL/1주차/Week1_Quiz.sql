@@ -1,0 +1,97 @@
+-- COUNTRY_TEST 테이블 만들기
+CREATE TABLE COUNTRY_TEST(
+   COUNTRY_ID NUMBER,
+   COUNTRY_NAME VARCHAR2(100) NOT NULL);
+ALTER TABLE COUNTRY_TEST
+ADD CONSTRAINTS COUNTRY_TEST_PK PRIMARY KEY(COUNTRY_ID);
+
+DESC COUNTRY_TEST;
+
+-- REGION_ID 컬럼 추가
+ALTER TABLE COUNTRY_TEST
+ADD REGION_ID NUMBER NULL;
+
+-- NOT NULL 컬럼으로 변경
+ALTER TABLE COUNTRY_TEST
+MODIFY REGION_ID NUMBER NOT NULL;
+
+-- 테이블 삭제
+DROP TABLE COUNTRY_TEST;
+
+-- LOCATIONS 테이블에서 LOCATION_ID 값이 2000보다 크거나 같고 3000 보다 작은건을 조회
+SELECT *
+FROM LOCATIONS
+WHERE LOCATION_ID >=2000
+AND LOCATION_ID < 3000;
+
+-- EMPLOYEES 테이블에서 FIRST_NAME이 'David'이고 급여가 6000이상인 사람이 속한 부서가 위치한 도시 찾기
+-- 3개의 문장 사용해서 찾기
+SELECT *
+FROM EMPLOYEES
+WHERE FIRST_NAME = 'David'
+AND SALARY >= 6000;
+
+SELECT *
+FROM DEPARTMENTS
+WHERE DEPARTMENT_ID = 80;
+
+SELECT *
+FROM LOCATIONS
+WHERE LOCATION_ID = 2500;
+
+-- EMPLOYEES 테이블에서 사장 조회하기
+-- MANAGER_ID가 NULL인 사람이 사장
+SELECT *
+FROM EMPLOYEES
+WHERE MANAGER_ID IS NULL;
+
+-- commission_pct 컬럼값이 Null인 건은 salary만, null이 아닌 건은 salary + (salary * commission_pct) 로 처리
+SELECT employee_id, first_name, last_name, salary, commission_pct,
+CASE WHEN COMMISSION_PCT IS NULL THEN SALARY
+     ELSE SALARY+(SALARY * COMMISSION_PCT) 
+     END real_salary
+FROM EMPLOYEES;
+
+-- LOCATIONS 테이블에서 도시 이름이 S로 시작하는 건을 도시이름으로 내림차순 정렬해 조회
+SELECT *
+FROM LOCATIONS
+WHERE CITY LIKE 'S%'
+ORDER BY CITY DESC;
+
+-- 우편번호 – 거리명 – 도시명 – 주명 – 국가코드 형태로 결과가 조회되도록 쿼리 작성
+SELECT POSTAL_CODE||' - '||STREET_ADDRESS||' - '||CITY||' - '||STATE_PROVINCE||' - '||COUNTRY_ID AS 주소
+FROM LOCATIONS
+WHERE COUNTRY_ID = 'US'
+ORDER BY 주소;
+
+
+-- 우편번호가 없는 건을 제외하고 조회하는 문장을 작성
+SELECT POSTAL_CODE||' - '||STREET_ADDRESS||' - '||CITY||' - '||STATE_PROVINCE||' - '||COUNTRY_ID AS 주소
+FROM LOCATIONS
+WHERE NOT POSTAL_CODE IS NULL
+AND COUNTRY_ID = 'UK'
+ORDER BY 1;
+
+# 알게된 점
+-- 값을 제외하고 싶을 때 NOT을 활용하는 것
+-- 문제에서 NULL을 제외하라고 했으니 WHERE절에 NOT~ IS NULL 사용
+(LOCATIONS 테이블 전체에서 우편번호가 NULL인 값을 제외해야 하기 때문에 WHERE절에 조건 입력)
+-- 문제를 처음 봤을 때는 WHERE절이 아닌 CASE문이 떠올랐음 (문제점)
+-- IS NOT NULL로도 위와 같은 결과가 나온다
+SELECT POSTAL_CODE||' - '||STREET_ADDRESS||' - '||CITY||' - '||STATE_PROVINCE||' - '||COUNTRY_ID AS 주소
+FROM LOCATIONS
+WHERE POSTAL_CODE IS NOT NULL
+AND COUNTRY_ID = 'UK'
+
+-- 우편번호가 없는 건을 제외하는 대신 우편번호가 없는 건은 우편번호를 '99999'로 나오도록 조회
+SELECT 
+CASE WHEN POSTAL_CODE IS NULL THEN '99999'
+     ELSE POSTAL_CODE
+END||' - '||STREET_ADDRESS||' - '||CITY||' - '||STATE_PROVINCE||' - '||COUNTRY_ID AS 주소
+FROM LOCATIONS
+WHERE COUNTRY_ID = 'UK'
+ORDER BY 1;
+
+# 알게된 점
+-- CASE문 자체를 가지고 새로운 별칭을 만들어 활용할 수 있다는 사실
+ORDER BY 1;

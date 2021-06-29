@@ -28,83 +28,81 @@
 
 - 기존 문법과 ANSI 문법을 비교해보면 다음과 같은 차이가 있다
 
-```sql
 -- 기존 문법
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a, departments b
 WHERE a.department_id = b.department_id
 ORDER BY a.department_id;
 
 -- ANSI 문법 (조건을 FROM절에)
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a 
-		inner join departments b
-		ON a.department_id = b.department_id
+	inner join departments b
+	ON a.department_id = b.department_id
 ORDER BY a.department_id;
-```
+
 
 ### ANSI 외부조인
 
 - 외부조인 역시 기존 문법과 차이가 있다
 - 종류는 LEFT OUTER JOIN, RIGHT OUTER JOIN, FULL OUTER JOIN으로 조인의 기준이 되는 테이블이 다르다
 
-```sql
 -- 기존 문법
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a, departments b
 WHERE a.department_id = b.department_id(+)
 ORDER BY a.employee_id;
 
 -- ANSI 외부조인 (LEFT OUTER JOIN) -> 기준이 되는 테이블을 왼쪽에.
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a 
-		LEFT OUTER JOIN departments b
-		ON a.department_id = b.department_id
+	LEFT OUTER JOIN departments b
+	ON a.department_id = b.department_id
 ORDER BY a.employee_id;
 
 -- 기존 문법
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a, departments b
 WHERE a.department_id(+) = b.department_id
 ORDER BY a.employee_id;
 
 -- ANSI 외부조인(RIGHT OUTER JOIN) -> 기준이 되는 테이블이 오른쪽.
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a
-		RIGHT OUTER JOIN departments b
-		ON a.department_id = b.department_id
+	RIGHT OUTER JOIN departments b
+	ON a.department_id = b.department_id
 ORDER BY a.employee_id;
 
 -- FULL OUTER JOIN은 기존문법에는 없기 때문에 반드시 ANSI 문법으로 써야 한다
 -- FULL OUTER JOIN은 말 그대로 조인 조건에 맞지 않아도 모든 데이터를 가져온다
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a
-		FULL OUTER JOIN departments b
-		ON a.department_id = b.department_id
+	FULL OUTER JOIN departments b
+	ON a.department_id = b.department_id
 ORDER BY a.employee_id
-				b. department_id;
-```
+	b. department_id;
+	
 
 ### 일반조인과 ANSI 조인 문법
 
@@ -130,25 +128,25 @@ ORDER BY a.employee_id
 - 동일한 테이블끼리 조인
 - 셀프 조인의 사용 예는 다음과 같다
 
-```sql
+
 -- manager_id에 해당하는 사원명을 가져오기 위해 셀프 조인
 
 SELECT a.employee_id
-			,a.first_name || ' ' || a.last_name emp_name
-			,a.manager_id
-			,b.first_name || ' ' || b.last_name manager_name
+	,a.first_name || ' ' || a.last_name emp_name
+	,a.manager_id
+	,b.first_name || ' ' || b.last_name manager_name
 FROM employees a
-		,employees b
+	,employees b
 WHERE a.manager_id = b.employee_id
 ORDER BY 1;
 
 -- ANSI 조인 문법으로도 가능
 SELECT a.employee_id
-			,a.first_name || ' ' || a.last_name emp_name
-			,a.manager_id
-			,b.first_name || ' ' || b.last_name manager_name
+	,a.first_name || ' ' || a.last_name emp_name
+	,a.manager_id
+	,b.first_name || ' ' || b.last_name manager_name
 FROM employees a
-		INNER JOIN employees b
-		ON a.manager_id = b.employee_id
+	INNER JOIN employees b
+	ON a.manager_id = b.employee_id
 ORDER BY 1;
-```
+

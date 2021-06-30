@@ -1,0 +1,188 @@
+- INSERT 문 실습
+- UPDATE 문 실습
+- DELETE 문 실습
+- 테이블 생성과 데이터 복사 동시에 하기
+
+---
+
+## INSERT 문 실습
+
+- INSERT 문에서는 NOT NULL 컬럼에 NULL을 입력할 수 없다
+- 또한 기본키 컬럼은 중복값을 허용하지 않는다 (무결성 제약조건)
+
+
+-- 구문 1
+-- 실습용 테이블 생성
+CREATE TABLE EMP (
+	EMP_NO VARCHAR2(30) NOT NULL,
+	EMP_NAME VARCHAR2(80) NOT NULL,
+	SALARY NUMBER NULL,
+	HIRE_DATE DATE NULL
+);
+
+-- 기본키 추가
+ALTER TABLE EMP
+ADD CONSTRAINTS EMP_PK PRIMARY KEY(EMP_NO);
+
+-- INSERT 로 값 추가
+INSERT INTO EMP(EMP_NO, EMP_NAME, SALARY, HIRE_DATE)
+VALUES(1, '홍길동', 1000, '2020-06-01');
+INSERT INTO EMP(EMP_NO, EMP_NAME) -- 일부 컬럼만 값 추가 가능
+VALUES(2, '김유신');
+INSERT INTO EMP(EMP_NAME, EMP_NO) -- 값만 제대로 잘 맞으면 컬럼 순서 바뀌어도 상관없음
+VALUES('강감찬', 3);
+INSERT INTO EMP -- 컬럼명 생략시, VALUES 절에 모든 컬럼의 값을 입력해주어야 함
+VALUES(4, '세종대왕', 1000, SYSDATE);
+
+
+-- 구문 2
+-- SELECT 절과 함께 쓸 수 있다
+-- 사원번호가 90인 사원을 조회해 EMP 테이블에 입력
+TRUNCATE TABLE EMP; -- 앞의 데이터 지우기
+
+INSERT INTO EMP
+SELECT EMPLOYEE_ID,
+    FIRST_NAME||' '||LAST_NAME EMP_NAME,
+    SALARY, HIRE_DATE
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = 90;
+
+-- 조인을 사용한 쿼리를 통해 그 결과를 EMP_INFO1 테이블에 입력
+INSERT INTO EMP_INFO1
+SELECT A.EMPLOYEE_ID,
+    A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+    A.SALARY, A.HIRE_DATE,
+    B.DEPARTMENT_NAME, D.COUNTRY_NAME
+FROM EMPLOYEES A, DEPARTMENTS B,
+    LOCATIONS C, COUNTRIES D
+WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
+AND B.LOCATION_ID = C.LOCATION_ID
+AND C.COUNTRY_ID = D.COUNTRY_ID;
+
+SELECT *
+FROM EMP_INFO1;
+
+
+-- 구문 3
+-- 여러 테이블에 동시 INSERT하는 경우
+-- 컬럼과 값의 쌍 개수, 순서 데이터 형이 맞아야 한다
+-- EMP1, EMP2, EMP3 테이블 생성 후 값 한번에 넣기
+INSERT ALL
+    INTO EMP1(EMP_NO, EMP_NAME, SALARY, HIRE_DATE)
+        VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE)
+    INTO EMP2(EMP_NO, EMP_NAME, SALARY, HIRE_DATE)
+        VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE)
+    INTO EMP3(EMP_NO, EMP_NAME)  -- EMP3 테이블은 입력하지 않은 컬럼의 값들은 NULL값으로 나타난다
+        VALUES(EMP_NO, EMP_NAME)
+SELECT EMPLOYEE_ID EMP_NO,
+    FIRST_NAME||' '||LAST_NAME EMP_NAME,
+    SALARY, HIRE_DATE
+FROM EMPLOYEES;
+
+
+-- 구문 4
+-- WHEN 조건을 체크해 조건이 맞으면 INSERT 하는 경우
+-- WHEN 조건과 INTO 조건을 여러개 명시할 수 있다
+-- 구문 4 역시 여러 테이블에 동시에 INSERT 할 수 있다
+-- DEPT_ID를 조건으로 여러 테이블에 값 넣기
+INSERT ALL
+    WHEN DEPT_ID = 20 THEN
+        INTO EMP1(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+    WHEN DEPT_ID BETWEEN 30 AND 50 THEN
+        INTO EMP2(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+    WHEN DEPT_ID > 50 THEN
+        INTO EMP3(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+SELECT EMPLOYEE_ID EMP_NO,
+    FIRST_NAME||' '||LAST_NAME EMP_NAME,
+    SALARY, HIRE_DATE, DEPARTMENT_ID DEPT_ID
+FROM EMPLOYEES;
+
+-- 위와 같지만 ALL 대신 FIRST를 사용하는 경우
+-- 첫 번째 WHEN 조건을 만족하면 이후 INTO 절을 수행한다 (첫 번째 테이블에만 값이 들어가고,
+-- 나머지 테이블에는 NULL 값)
+INSERT FIRST
+    WHEN SALARY >= 2500 THEN
+        INTO EMP1(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+    WHEN SALARY >= 5000 THEN
+        INTO EMP2(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+    WHEN SALARY >= 7000 THEN
+        INTO EMP3(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+            VALUES(EMP_NO, EMP_NAME, SALARY, HIRE_DATE, DEPT_ID)
+SELECT EMPLOYEE_ID EMP_NO,
+    FIRST_NAME||' '||LAST_NAME EMP_NAME,
+    SALARY, HIRE_DATE, DEPARTMENT_ID DEPT_ID
+FROM EMPLOYEES;
+
+SELECT MIN(SALARY), MAX(SALARY)
+FROM EMP1;
+SELECT MIN(SALARY), MAX(SALARY)
+FROM EMP2;
+SELECT MIN(SALARY), MAX(SALARY)
+FROM EMP3;
+
+-- 확인 결과 EMP1 테이블에만 값이 들어가 있다
+
+
+## UPDATE문 실습
+
+- 변경값 항목에는 표현식과 서브쿼리를 사용할 수 있다
+- WHERE 절 생략하면 전체 ROW의 컬럼값이 변경된다
+
+-- EMP 테이블에서 SALARY가 20000 미만인 컬럼값을 0으로 바꾸기
+UPDATE EMP
+SET SALARY = 0
+WHERE SALARY < 20000;
+
+-- EMP_INFO1 테이블에서 SALARY 가 10000 이상 20000 이하인 사원들의 사원명에 '(MIDDLE)' 글자 추가하기
+UPDATE EMP_INFO1
+SET EMP_NAME = EMP_NAME||'(MIDDLE)'
+WHERE SALARY BETWEEN 10000 AND 20000;
+
+-- 변경값 항목에 서브쿼리를 사용하는 경우
+-- 서브쿼리에서 추출된 값을 변경값으로 사용해 행을 업데이트
+UPDATE EMP1
+SET DEPT_ID = (SELECT MAX(DEPARTMENT_ID)
+                FROM DEPARTMENTS
+                WHERE MANAGER_ID IS NULL
+                )
+WHERE DEPT_ID IS NULL;
+
+
+## DELETE 문 실습
+
+- WHERE 조건을 만족하는 ROW에 한 해 삭제된다
+- UPDATE와 비슷하게 WHERE 조건 생략 시 테이블 전체에 대해 삭제를 실행한다
+
+-- EMP 테이블에서 EMP_NO가 101, 102인 데이터 삭제
+DELETE EMP
+WHERE EMP_NO IN (101, 102);
+
+-- EMP1 테이블에서 EMP_NAME이 J로 시작하는 데이터 삭제
+DELETE EMP1
+WHERE EMP_NAME LIKE 'J%';
+
+
+## 테이블 생성과 데이터 복사 동시에 하기
+
+- 테이블을 임시 생성 후 작업시 유용하다
+- 구문
+    CREATE TABLE 테이블명 AS
+    SELECT *
+    FROM 복사 대상 테이블;
+
+    ⇒ 테이블 생성과 동시에 SELECT 문이 반환하는 데이터도 함께 입력된다
+    ⇒ DDL 이므로 커밋이 필요 없다
+
+-- EMPLOYEES 테이블의 복사 테이블 생성
+CREATE TABLE EMPLOYEES_COPY AS
+    SELECT *
+    FROM EMPLOYEES;
+
+-- 조회
+SELECT *
+FROM EMPLOYEES_COPY;

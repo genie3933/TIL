@@ -21,14 +21,10 @@
 - 일반 집계함수(SUM, MAX, MIN, AVG 등)를 분석함수로 사용 가능하다
 - 그 외에도 ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD 함수가 있다
 - 구문
-
-    **분석함수 OVER(PARTITION BY COL1, COL2, ...**
-
-    **ORDER BY COL1, COL2 ....)**
-
-    PARTITION BY: 분석 함수 집계 대상이 되는 로우 값의 범위로, 생략시 전체 로우가 분석함수 집계 대상이 된다.
-
-    ORDER BY: 분석 함수 계산 시, 고려되는 로우 순서
+**분석함수 OVER(PARTITION BY COL1, COL2, ...**
+**ORDER BY COL1, COL2 ....)**
+PARTITION BY: 분석 함수 집계 대상이 되는 로우 값의 범위로, 생략시 전체 로우가 분석함수 집계 대상이 된다.
+ORDER BY: 분석 함수 계산 시, 고려되는 로우 순서
 
 ## 분석함수 종류
 
@@ -36,52 +32,48 @@
 
 - 구문은 다음과 같다
 
-```sql
 -- ROW_NUMBER( )
 SELECT COL1, COL2, ...
 	ROW_NUMBER OVER(PARTITION BY COL1, COL2, ...
-									ORDER BY COL1, COL2, ...)
+			ORDER BY COL1, COL2, ...)
 FROM ~
 WHERE ~
 ORDER BY ~;
-```
+
 
 - EX) 부서별 사원의 급여 순으로 **순번** 구하기
 - PARTITION BY나 ORDER BY를 꼭 쓰지 않아도 분석함수를 사용할 수 있지만, PARTITION BY를 쓰지 않을 경우 전체 데이터에 분석함수가 적용된다
+
 
 ### RANK( ): 순위
 
 - 구문은 다음과 같다
 
-```sql
 -- RANK( )
 SELECT COL1, COL2, ...
 	RANK OVER(PARTITION BY COL1, COL2, ...
-						ORDER BY COL1, COL2, ...)
+		ORDER BY COL1, COL2, ...)
 FROM ~
 WHERE ~
 ORDER BY ~;
-```
 
 - EX) 부서별 사원의 급여가 높은 순으로 **순위** 구하기
 - RANK 함수는 동일값이 있을 때 동일한 순위로 표시한다
+
 
 ### DENSE_RANK( ): 누적순위
 
 - 구문은 다음과 같다
 
-```sql
 -- DENSE_RANK( )
 SELECT COL1, COL2, ...
 	DENSE_RANK OVER(PARTITION BY COL1, COL2, ...
-							ORDER BY COL1, COL2, ...)
+			ORDER BY COL1, COL2, ...)
 FROM ~
 WHERE ~
 ORDER BY ~;
-```
 
 - RANK 함수와 비슷하지만 DENSE_RANK 함수는 동일 순위를 하나의 건수로 취급한다
-
     EX) 만약 1위가 2명일 경우 DENSE_RANK는 1, 1로 값 입력, 다음 순위는 2의 값을 가진다. 반면 RANK는 다음 순위가 3의 값을 가지게 된다
 
 ### LEAD(expr, offset, default): 후행 로우값
@@ -102,37 +94,33 @@ ORDER BY ~;
 - SUM, MAX, MIN, AVG등의 집계함수가 이에 해당한다
 - 집계함수의 사용 예는 아래와 같다
 
-```sql
 -- 사원 급여와 부서별 누적 급여를 조회하는 쿼리
 SELECT b.department_id, b.department_name,
-			a.first_name || ' ' || a.last_name as emp_name,
-			a.salary ,
-			ROUND(SUM(a.salary) OVER (
-						PARTITION BY b.department_id
-						ORDER BY a.salary ),0) dept_cum_sum
+	a.first_name || ' ' || a.last_name as emp_name,
+	a.salary ,
+	ROUND(SUM(a.salary) OVER (PARTITION BY b.department_id
+				ORDER BY a.salary ),0) dept_cum_sum
 FROM employees a,
-			departments b
+	departments b
 WHERE a.department_id = b.department_id
 ORDER BY 2, 4;
-```
+
 
 ### RATIO_TO_REPORT( ): 비율
 
 - 분석함수 자리에 입력하면 파티션 별 인수의 비율을 구할 수 있다
 - 사용 예시는 아래와 같다
 
-```sql
 -- 부서별 사원 급여의 비율을 조회하는 쿼리
 SELECT b.department_id, b.department_name,
-				a.first_name || ' ' || a.last_name as emp_name,
-				a.salary ,
-				ROUND(RATIO_TO_REPORT(a.salary)
-					OVER (PARTITION BY b.department_id ),2) rates
+	a.first_name || ' ' || a.last_name as emp_name,
+	a.salary ,
+	ROUND(RATIO_TO_REPORT(a.salary) OVER (PARTITION BY b.department_id ),2) rates
 FROM employees a,
-		departments b
+	departments b
 WHERE a.department_id = b.department_id
 ORDER BY 2, 4 DESC;
-```
+
 
 ## MSSQL
 
@@ -145,9 +133,7 @@ ORDER BY 2, 4 DESC;
 - 빌트인 함수, 컬럼의 데이터 형이 오라클과 약간의 차이가 존재한다
 
     문자형: VARCHAR
-
     날짜형: DATETIME
-
     숫자형: INT, FLOAT, DOUBLE, DECIMAL
 
 ### 오라클과의 차이점
@@ -164,5 +150,4 @@ ORDER BY 2, 4 DESC;
 - 오라클의 MOD → MSSQL에서는 % 연산자
 - 차집합을 EXCEPT로 쓴다
 - 오라클에서 empty string('')은 Null이지만 MSSQL에서는 Null이 아니라 ''값이다
-
-    그러므로 조건절에 등호를 사용해 비교가 가능하다 (where null_check = '')
+- 그러므로 조건절에 등호를 사용해 비교가 가능하다 (where null_check = '')

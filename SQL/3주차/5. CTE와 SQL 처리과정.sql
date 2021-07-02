@@ -16,58 +16,58 @@
 - 하나의 서브쿼리를 또 다른 서브쿼리에서 참조하여 재사용 가능한 구문
 - WITH 절의 구문은 다음과 같다
 
-```sql
 WITH alias1 AS (SELECT ...
-							FROM ....),
-			alias2 AS (SELECT ...
-							FROM ....),
-			alias_last AS (SELECT ...
-										FROM ...)
+		FROM ....),
+	alias2 AS (SELECT ...
+		FROM ....),
+	alias_last AS (SELECT ...
+		FROM ...)
 SELECT ...
 FROM alias_last
 ...;
-```
+
 
 - WITH는 한 번만 명시하고 서브쿼리를 여러개 사용 가능하다
 - 최종 반환 결과는 마지막에 있는 메인쿼리이다
 - 서브쿼리 내의 FROM 절에서 다른 서브쿼리 별칭을 기술해 인라인 뷰처럼 사용 가능하다
-
-```sql
 -- 예시 쿼리
+
 WITH COUN_SAL AS(
-SELECT C.COUNTRY_ID, SUM(A.SALARY) SAL_AMT
-FROM EMPLOYEES A,
-    DEPARTMENTS B,
-    LOCATIONS C
-WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
-AND B.LOCATION_ID = C.LOCATION_ID
-GROUP BY C.COUNTRY_ID),
+	SELECT C.COUNTRY_ID, SUM(A.SALARY) SAL_AMT
+	FROM EMPLOYEES A,
+	    DEPARTMENTS B,
+	    LOCATIONS C
+	WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
+	AND B.LOCATION_ID = C.LOCATION_ID
+	GROUP BY C.COUNTRY_ID
+	),
     MAINS AS(
-    SELECT B.COUNTRY_NAME, A.SAL_AMT
-    FROM COUN_SAL A,
-        COUNTRIES B
-    WHERE A.COUNTRY_ID = B.COUNTRY_ID)
+	    SELECT B.COUNTRY_NAME, A.SAL_AMT
+	    FROM COUN_SAL A,
+		COUNTRIES B
+	    WHERE A.COUNTRY_ID = B.COUNTRY_ID
+	    )
 SELECT *
 FROM MAINS
 ORDER BY 1;
-```
+
 
 - 메인쿼리에서는 FROM 절에서 서브쿼리 한 개, 혹은 여러 개의 서브쿼리를 조인해 결과를 조회할 수 있다
 - 결국 메인쿼리에서 쓸 서브쿼리를 미리 WITH절에 기술해주는 것이라고 생각하면 쉽다
-
-```sql
 -- 예시 쿼리
+
 WITH DEPT AS (
     SELECT DEPARTMENT_ID,
         DEPARTMENT_NAME DEPT_NAME
-    FROM DEPARTMENTS)
+    FROM DEPARTMENTS
+    )
 SELECT A.EMPLOYEE_ID,
         A.FIRST_NAME||' '||A.LAST_NAME
 FROM EMPLOYEES A, 
     DEPT B
 WHERE A.DEPARTMENT_ID = B.DEPARTMENT_ID
 ORDER BY 1;
-```
+
 
 ## WITH 절 특징
 
@@ -102,58 +102,52 @@ ORDER BY 1;
 
 ### ROWNUM 사용
 
-```sql
 -- 서브쿼리에서 SALARY 값을 기준으로 내림차순 정렬
 -- ROWNUM을 사용해 5건 이하만 조회
 SELECT *
-FROM (
-	SELECT A.EMPLOYEE_ID,
-				A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
-				A.SALARY
+FROM (SELECT A.EMPLOYEE_ID,
+	A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+	A.SALARY
 	FROM EMPLOYEES A
 	ORDER BY A.SALARY DESC) B
 WHERE ROWNUM <=5
-```
+
 
 ### ROW_NUMBER( ) 사용
 
-```sql
 -- 서브쿼리에서 분석함수 사용해 SALARY 값을 기준으로 내림차순 순번 계산
 -- 계산한 순번을 사용해 5건 이하만 조회
 SELECT *
-FROM (
-	SELECT A.EMPLOYEE_ID,
-				A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
-				ROW_NUMBER() OVER(ORDER BY A.SALARY DESC) ROW_SEQ
+FROM (SELECT A.EMPLOYEE_ID,
+	A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+	ROW_NUMBER() OVER(ORDER BY A.SALARY DESC) ROW_SEQ
 	FROM EMPLOYEES A ) B
 WHERE ROW_SEQ <=5;
-```
+
 
 ### FETCH FIRST ROWS 구문(12C 부터 사용 가능)
 
-```sql
 -- SALARY 값 기준으로 내림차순 정렬
 -- FETCH FIRST ROWS 구문 사용해 5개 로우만 조회
 SELECT A.EMPLOYEE_ID,
-			A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
-			A.SALARY
+	A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+	A.SALARY
 FROM EMPLOYEES A
 ORDER BY A.SALARY DESC
 FETCH FIRST 5 ROWS ONLY;
 
 -- 5퍼센트에 해당하는 로우를 조회하려면?
 SELECT A.EMPLOYEE_ID,
-			A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
-			A.SALARY
+	A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+	A.SALARY
 FROM EMPLOYEES A
 ORDER BY A.SALARY DESC
 FETCH FIRST 5 PERCENT ROWS ONLY;
 
 -- WITH TIES 옵션은 끝에 같은 값을 모두 조회하게 한다
 SELECT A.EMPLOYEE_ID,
-			A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
-			A.SALARY
+	A.FIRST_NAME||' '||A.LAST_NAME EMP_NAME,
+	A.SALARY
 FROM EMPLOYEES A
 ORDER BY A.SALARY DESC
 FETCH FIRST 5 PERCENT ROWS WITH TIES;
-```

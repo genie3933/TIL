@@ -20,49 +20,46 @@
 - 동등 연산자를 사용해서 조인 컬럼 값이 같은 건이 조회되는 것이다 (컬럼 값이 같지 않으면 조회되지 않는다)
 - 내부 조인의 사용 예는 다음과 같다
 
-```sql
 select a.employee_id,
-				a.first_name,
-				a.department_id,
-				b.department_name
+	a.first_name,
+	a.department_id,
+	b.department_name
 from employees a,
-		departments b
+	departments b
 where a.department_id = b.department_id
 order by a.department_id;
-```
+
 
 - 각 테이블에 alias를 주는 것이 좋고, 모든 컬럼은 테이블명.컬럼명 형태를 지켜주는 것이 좋다
 - where 절에서는 조인 조건과 일반 조건을 함께 사용할 수 있다
 
-```sql
 select a.employee_id,
-			a.first_name || ' ' || a.last_name emp_names,
-			b.job_title,
-			c.department_id,
-			c.department_name
+	a.first_name || ' ' || a.last_name emp_names,
+	b.job_title,
+	c.department_id,
+	c.department_name
 from employees a,
-		jobs b,
-		departments c
+	jobs b,
+	departments c
 where a.job_id = b.job_id
 and a.department_id = c.department_id
 and c.department_id = 30
 order by 1;
-```
+
 
 - 조인조건이 여러개이면 and 연산자를 사용해 나열하면 된다
 
-```sql
 select a.employee_id, a.first_name || ' ' || a.last_name emp_names,
-				b.job_title,
-				c.department_id ,
-				c.department_name
+	b.job_title,
+	c.department_id ,
+	c.department_name
 from employees a,
-			jobs b,
-			departments c
+	jobs b,
+	departments c
 where a.job_id = b.job_id
 and a.department_id = c.department_id
 order by 1;
-```
+
 
 ## 외부 조인(Outer Join)
 
@@ -70,31 +67,27 @@ order by 1;
 - A, B 두 테이블 기준, 조인 조건에 부합하지 않는 상대방 테이블의 데이터도 조회된다
 - 조인조건에 (+)를 붙여야 한다 (오라클 전용 문법)
 - 조인 조건을 만족하지 않는 a 테이블의 데이터까지 조회할 때
+: where a.department_id = b.department_id (+)
 
-     : where a.department_id = b.department_id (+)
-
-    조인 조건을 만족하지 않는 b 테이블의 데이터까지 조회할 때
-
-    : where a.department_id (+) = b.department_id
+- 조인 조건을 만족하지 않는 b 테이블의 데이터까지 조회할 때
+ : where a.department_id (+) = b.department_id
 
 - 외부 조인의 사용 예는 다음과 같다
 
-```sql
 SELECT a.employee_id emp_id,
-				a.department_id a_dept_id,
-				b.department_id b_dept_id,
-				b.department_name dept_name
+	a.department_id a_dept_id,
+	b.department_id b_dept_id,
+	b.department_name dept_name
 FROM employees a, departments b
 WHERE a.department_id = b.department_id (+)
 ORDER BY a.department_id;
 
 -- 이렇게 하면 결과는 부서번호가 null인 데이터도 있는 a테이블의 데이터까지 조회가 된다.
-```
+
 
 - 오라클 외부 조인의 제약사항
 
     : 조인 컬럼이 여러 개일 경우, 조인 조건에서 (+) 기호를 모두 붙여야 제대로 조회된다
-
     : 조인 조건 양쪽에 (+) 기호를 붙일 수 없다
 
 ### 외부 조인을 사용하는 이유?

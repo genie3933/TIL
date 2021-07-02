@@ -17,16 +17,14 @@
 - 메인쿼리 기준 여러개의 서브쿼리를 사용할 수 있다
 - 종류는 아래와 같다
 
-    서브쿼리의 위치에 따라
+서브쿼리의 위치에 따라
+- 스칼라 서브쿼리: SELECT 절
+- 인라인 뷰: FROM 절
+- 중첩 서브쿼리: WHERE 절
 
-    - 스칼라 서브쿼리: SELECT 절
-    - 인라인 뷰: FROM 절
-    - 중첩 서브쿼리: WHERE 절
-
-    메인쿼리와의 연관성에 따라
-
-    - 연관성 있는 서브쿼리: 메인쿼리와 조인
-    - 연관성 없는 서브쿼리: 메인쿼리와 독립
+메인쿼리와의 연관성에 따라
+- 연관성 있는 서브쿼리: 메인쿼리와 조인
+- 연관성 없는 서브쿼리: 메인쿼리와 독립
 
 ### 스칼라 서브쿼리 (Scalar Subquery)
 
@@ -48,36 +46,33 @@
 - 일반적으로 인라인 뷰와 메인쿼리의 조인을 수행하려면 메인쿼리의 WHERE절에서 수행이 가능하다
 - 그러나 오라클 12C부터 추가된 기능으로, 서브쿼리 앞에 LATERAL 키워드를 사용할 경우 서브쿼리 내에서도 조인이 가능하다 (스칼라 서브쿼리처럼 동작이 가능)
 
-```sql
 -- 비교
 -- 일반적인 인라인 뷰 서브쿼리와 메인쿼리 조인
 SELECT a.employee_id,
-			a.first_name || a.last_name emp_name,
-			a.department_id,
-			c.dept_name
+	a.first_name || a.last_name emp_name,
+	a.department_id,
+	c.dept_name
 FROM employees a,
-		( SELECT b.department_id,
-							b.department_name dept_name
-			FROM departments b ) c
+		( SELECT b.department_id, b.department_name dept_name
+		FROM departments b ) c
 WHERE a.department_id = c.department_id
 ORDER BY 1;
 
 -- LATERAL 키워드 사용했을 시
 SELECT a.employee_id,
-			a.first_name || a.last_name emp_name,
-			a.department_id,
-			c.dept_name
+	a.first_name || a.last_name emp_name,
+	a.department_id,
+	c.dept_name
 FROM employees a,
 		LATERAL
 		( SELECT b.department_name dept_name
 			FROM departments b
 			WHERE a.department_id = b.department_id ) c
 ORDER BY 1;
-```
+
 
 - 인라인 뷰의 사용 이유?
-
-    분석함수가 나오기 전 그룹별 집계를 할 때 유용하게 쓰였다
+- 분석함수가 나오기 전 그룹별 집계를 할 때 유용하게 쓰였다
 
 ### 중첩 서브쿼리 (Nested Subquery)
 
@@ -89,24 +84,21 @@ ORDER BY 1;
 - 서브쿼리 내에서 메인쿼리와 조인이 가능하다
 - IN, EXISTS 뒤에 많이 쓰인다
 
-```sql
+
 -- employees 테이블의 department_id와 같은 departments의 데이터만 조회
 SELECT *
 FROM departments
 WHERE department_id IN ( SELECT department_id
-													FROM employees
-													) ;
+			FROM employees
+			);
 
 -- 존재하는지를 체크하는 exists
 -- 서브쿼리 내에서 employees, departements 조인
 SELECT *
 FROM departments a
-WHERE EXISTS
-		( SELECT 1
-			FROM employees b
-			WHERE a.department_id = b.department_id
-		) ;
-```
+WHERE EXISTS ( SELECT 1
+		FROM employees b
+		WHERE a.department_id = b.department_id);
 
 - EXISTS는 조인조건이 있지만 IN은 조인조건이 없다
 - EXISTS를 썼을 때는 SELECT절에 값을 확인할 용도로 아무 숫자 혹은 문자를 써 놓아야 한다

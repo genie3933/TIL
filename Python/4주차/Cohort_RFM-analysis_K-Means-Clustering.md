@@ -41,11 +41,11 @@
   즉, K-means Clustering은 K개의 Centroid를 기반으로 K개의 클러스터를 만들어주는 것이다
 
 - K-means Clustering의 목적은 유사한 데이터 포인트끼리 그루핑하여 패턴을 찾아내는 것이다
-- 프로세스는 다음과 같다
-    1. 클러스터의 개수 결정 (K 결정)
-    2. 초기 Centroid 결정
-    3. 각 데이터마다 가장 가까운 Centroid가 있는 클러스터로 assign
-    4. Centroid를 클러스터의 중심으로 이동
+- 프로세스는 다음과 같다  
+    1. 클러스터의 개수 결정 (K 결정)  
+    2. 초기 Centroid 결정  
+    3. 각 데이터마다 가장 가까운 Centroid가 있는 클러스터로 assign  
+    4. Centroid를 클러스터의 중심으로 이동  
     5. 클러스터에 assign 되는 데이터가 없을때까지 3, 4 과정을 계속 반복
 
 출처: [https://bkshin.tistory.com/entry/머신러닝-7-K-평균-군집화-K-means-Clustering](https://bkshin.tistory.com/entry/%EB%A8%B8%EC%8B%A0%EB%9F%AC%EB%8B%9D-7-K-%ED%8F%89%EA%B7%A0-%EA%B5%B0%EC%A7%91%ED%99%94-K-means-Clustering)
